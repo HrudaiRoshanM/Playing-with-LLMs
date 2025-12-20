@@ -293,8 +293,8 @@ class MLPB(torch.nn.Module): #Multi-layer perceptron block
             # .any() returns the True value, along the last dimension
             if not mask.any():
                 continue
-            
-            token_indices = torch.where(mask)[0] # .where() returns indices where mask is True 
+
+            token_indices = torch.where(mask)[0] # .where() returns indices where mask is True
             # Hence token_indices is tuple with indices indicating, expert numbers for that token
 
             expert_pos = (expert_indices_flat[token_indices] == expert_idx).nonzero(as_tuple=True)[1]
@@ -320,7 +320,7 @@ class MLPB(torch.nn.Module): #Multi-layer perceptron block
         output = output.view(seq_len, hidden_size)
         return x + output
 
-          
+
 class TransformerBlock(torch.nn.Module):
     def __init__(
         self,
@@ -370,11 +370,12 @@ class Transformer(torch.nn.Module):
         x = self.unembedding(x)
         return x
 
-    
+
     @staticmethod
     def from_checkpoint(
         path: str, device: str | torch.device = "cuda"
     ) -> "Transformer":
+    # isinstance is used to check, whether object(device) belongs to a particular class
         if not isinstance(device, torch.device):
             device = torch.device(device)
 
@@ -425,10 +426,58 @@ class Transformer(torch.nn.Module):
         return model
 
 
-    
+class TokenGenerator:
+    @torch.inference_mode()
+    def __init__(self, checkpoint: str, device: torch.device):
+        self.device = device
+        self.model = Transformer.from_checkpoint("./", device=self.device)
+
+    @torch.inference_mode()
+    def generate(self,
+                 promt_tokens: list[int],
+                 stop_tokens: list[int],
+                 temperature: float = 1.0,
+                 max_tokens: int = 0,
+                 return_logprobs: bool = False):
+        tokens = list(promt_tokens)
+        num_generated_tokens = 0
+        while max_tokens == 0 or num_generated_tokens < max_tokens:
+            logits = self.model(torch.tensor(tokens, dtype=torch.int32, device=self.device))[-1]
+            if temperature == 0:
+                predicted_token = torch.argmax(logits, dim=-1).item()
+            else:
+                probs = torch.softmax(logits / temperature, dim=-1)
+                predicted_token = torch.multinomial(probs, num_samples=1).item()
+            tokens.append(predicted_token)
+            num_generated_tokens += 1
+
+            if return_logprobs:
+                logprobs = torch.log_softmax(logits, dim=-1)
+                selected_logprobs = logprobs[predited_token].item()
+                yield predicted_token, selected_logprobs
+            else:
+                yield predicted_token
+
+            if predicted_token in stop_tokens:
+                break
 
 
-    
+
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
