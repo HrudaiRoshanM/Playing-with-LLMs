@@ -5,6 +5,7 @@
 3 -> Optimizers : Trying to derive Keller's co-efficients. In Keller Jordan's blog, he says that he derived the co-efficients for his optimizer via an ad-hoc method, so I wanted to derive and see whether my experiments would also converge to his numbers. And that is what this notebook is about.
 
 4 -> Activation Engineering : Upon reading Turner et al 2024 paper, I came across so many papers which various pov's, so I did mock experiments on those papers and tried to understand their contributions. 
+
       A> Intervening on token embedding with soft prompting - Li & Liang 2021 add trainable vectors to every single layer of the transformer network but I experimented with Lester et al., 2021 who added the trainable vector only at the input layer. 
       
       B> Intervening on activations - Subramani et al. (2022) - 
