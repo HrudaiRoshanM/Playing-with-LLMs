@@ -8,8 +8,8 @@
       A> Intervening on token embedding with soft prompting - Li & Liang 2021 add trainable vectors to every single layer of the transformer network but I experimented with Lester et al., 2021 who added the trainable vector only at the input layer. 
       
       B> Intervening on activations - Subramani et al. (2022) - 
-      Goal: They wanted to see if they could force a frozen model to output an exact specific sentence (e.g., "The weather is blue") just by      injecting a vector.
-      Method:They freeze the model.They create a random vector z.They run the model and compare the output to the target sentence.
+      Goal: They wanted to see if they could force a frozen model to output an exact specific sentence (e.g., "The weather is blue") just by injecting a vector.
+      Method: They freeze the model.They create a random vector z.They run the model and compare the output to the target sentence.
       Gradient Descent: They calculate the error (loss) and use backpropagation to update the vector z (not the model weights).
       They repeat this until the vector  z  is perfect.
       Result: They found "Steering Vectors" that act like a remote control, forcing the model to say anything they want.
